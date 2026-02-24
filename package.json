@@ -1,0 +1,20 @@
+{
+  "name": "devbook",
+  "version": "1.0.0",
+  "description": "Facebook for devs",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js"
+  },
+  "keywords": [
+    "NodeJs",
+    "ExpressJs",
+    "MongoDB"
+  ],
+  "author": "Irfan Abbas",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
