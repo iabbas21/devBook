@@ -2,33 +2,25 @@ const express = require('express')
 
 const app = express()
 
-// Handles all HTTP methods for the /user route
-app.get(
-  '/user', 
-  (req, res, next) => {
-    console.log('Route hanlder 1')
-    next()
-  },
-  (req, res, next) => {
-    console.log('Route hanlder 2')
-    //res.send('Route hanlder 2')
-    next()
-  },
-  (req, res, next) => {
-    console.log('Route hanlder 3')
-    //res.send('Route hanlder 3')
-    next()
-  },
-  (req, res, next) => {
-    console.log('Route hanlder 4')
-    res.send('Route hanlder 4')
-    //next()
-  }
-)
+const { adminAuth, userAuth } = require('./middlewares/auth')
 
-app.use('/test', (req, res) => {
-  console.log('Test route handler')
-  res.send('Test route handler')
+// Middleware for admin authentication
+app.use('/admin', adminAuth)
+
+app.get('/admin/getAllUsers', (req, res) => {
+  res.send('All data for admin')
+})
+
+app.delete('/admin/deleteUser', (req, res) => {
+  res.send('Deleted user!')
+})
+
+app.post('/user/login', (req, res) => {
+  res.send('User logged in')
+})
+
+app.get('/user/data', userAuth, (req, res) => {
+  res.send('User data')
 })
 
 app.listen(3000, () => {
