@@ -2,25 +2,33 @@ const express = require('express')
 
 const app = express()
 
-app.use('/user', (req, res) => {
-    res.send('ha ha ha')
-})
+// Handles all HTTP methods for the /user route
+app.get(
+  '/user', 
+  (req, res, next) => {
+    console.log('Route hanlder 1')
+    next()
+  },
+  (req, res, next) => {
+    console.log('Route hanlder 2')
+    //res.send('Route hanlder 2')
+    next()
+  },
+  (req, res, next) => {
+    console.log('Route hanlder 3')
+    //res.send('Route hanlder 3')
+    next()
+  },
+  (req, res, next) => {
+    console.log('Route hanlder 4')
+    res.send('Route hanlder 4')
+    //next()
+  }
+)
 
-app.get('/user', (req, res) => {
-    res.send({ firstName: 'John', lastName: 'Doe' })
-})
-
-app.post('/user', (req, res) => {
-    res.send('User created successfully!')
-})
-
-app.delete('/user', (req, res) => {
-    res.send('User deleted successfully!')
-})
-
-// This will match all HTTP methods (GET, POST, PUT, DELETE, etc.) for the route '/test'
 app.use('/test', (req, res) => {
-    res.send('Hello from the server...!')
+  console.log('Test route handler')
+  res.send('Test route handler')
 })
 
 app.listen(3000, () => {
