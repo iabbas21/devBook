@@ -2,25 +2,20 @@ const express = require('express')
 
 const app = express()
 
-const { adminAuth, userAuth } = require('./middlewares/auth')
-
-// Middleware for admin authentication
-app.use('/admin', adminAuth)
-
-app.get('/admin/getAllUsers', (req, res) => {
-  res.send('All data for admin')
+app.get('/user', (req, res) => {
+  try {
+    throw new Error('xyz error')
+    res.send('User data')
+  } catch (error) {
+    res.status(500).send(error.message)
+  }
 })
 
-app.delete('/admin/deleteUser', (req, res) => {
-  res.send('Deleted user!')
-})
-
-app.post('/user/login', (req, res) => {
-  res.send('User logged in')
-})
-
-app.get('/user/data', userAuth, (req, res) => {
-  res.send('User data')
+app.use('/', (err, req, res, next) => {
+  if(err) {
+    // Log the error (you can use a logging library here)
+    res.status(500).send('Something went wrong')
+  }
 })
 
 app.listen(3000, () => {
