@@ -1,23 +1,28 @@
 const express = require('express')
-
+const connectDB = require('./config/database')
 const app = express()
+const User = require('./models/user')
 
-app.get('/user', (req, res) => {
+app.use(express.json())
+
+app.post('/signup', async (req, res) => {
+  console.log(req.body)
+  const userObj = req.body
+
   try {
-    throw new Error('xyz error')
-    res.send('User data')
-  } catch (error) {
-    res.status(500).send(error.message)
+    const user = new User(userObj)
+    await user.save()
+    res.send('User added successfully...')
+  } catch (err) {
+    res.status(400).send('Error adding user: ' + err.message)
   }
 })
 
-app.use('/', (err, req, res, next) => {
-  if(err) {
-    // Log the error (you can use a logging library here)
-    res.status(500).send('Something went wrong')
-  }
-})
-
-app.listen(3000, () => {
-  console.log('Server is listening on port 3000')
-})
+connectDB()
+    .then(() => {
+      console.log('Database connected successfully...')
+      app.listen(3000, () => {
+        console.log('Server is listening on port 3000...')
+      })
+    })
+    .catch((err) => console.error('Database connection error:', err))
