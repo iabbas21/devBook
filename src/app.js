@@ -67,17 +67,30 @@ app.delete('/user', async (req, res) => {
 })
 
 // PATCH /user - to update a user by userId
-app.patch('/user', async (req, res) => {
-  const { userId, ...updatedData } = req.body
+app.patch('/user/:userId', async (req, res) => {
+  const { userId } = req.params
+  const updatedData = req.body
+
+  const ALLOWED_UPDATES = ['age', 'gender', 'photoUrl', 'about', 'skills'];
+  const isValidUpdate = Object.keys(updatedData).every((key) => ALLOWED_UPDATES.includes(key))
+
+  if (!isValidUpdate) {
+    res.status(400).send('Invalid updates!')
+    return
+  }
+
+  if (updatedData.skills.length > 10) {
+    res.status(400).send('You can add a maximum of 10 skills')
+    return
+  }
 
   try {
     const result = await User.findByIdAndUpdate(userId, updatedData, {
       runValidators: true,
     }) // --> findOneAndUpdate({ _id: userId }, updatedData)
-    console.log(result)
     res.send('User updated successfully...')
   } catch (err) {
-    res.status(400).send('Something went wrong')
+    res.status(400).send('Something went wrong: ' + err.message)
   }
 })
 
