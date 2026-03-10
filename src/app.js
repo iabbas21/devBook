@@ -79,7 +79,7 @@ app.patch('/user/:userId', async (req, res) => {
     return
   }
 
-  if (updatedData.skills.length > 10) {
+  if (updatedData?.skills?.length > 10) {
     res.status(400).send('You can add a maximum of 10 skills')
     return
   }
