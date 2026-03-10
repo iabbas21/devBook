@@ -50,6 +50,37 @@ app.get('/feed', async (req, res) => {
   }
 })
 
+// DELETE /user - to delete a user by userId
+app.delete('/user', async (req, res) => {
+  const { userId } = req.body
+
+  try {
+    const result = await User.findByIdAndDelete(userId) // --> findOneAndDelete({ _id: userId })
+    if (!result) {
+      res.status(404).send('User not found')
+      return
+    }
+    res.send('User deleted successfully...')
+  } catch (err) {
+    res.status(400).send('Something went wrong')
+  }
+})
+
+// PATCH /user - to update a user by userId
+app.patch('/user', async (req, res) => {
+  const { userId, ...updatedData } = req.body
+
+  try {
+    const result = await User.findByIdAndUpdate(userId, updatedData, {
+      runValidators: true,
+    }) // --> findOneAndUpdate({ _id: userId }, updatedData)
+    console.log(result)
+    res.send('User updated successfully...')
+  } catch (err) {
+    res.status(400).send('Something went wrong')
+  }
+})
+
 connectDB()
     .then(() => {
       console.log('Database connected successfully...')
