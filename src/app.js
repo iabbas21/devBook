@@ -2,19 +2,53 @@ const express = require('express')
 const connectDB = require('./config/database')
 const app = express()
 const User = require('./models/user')
+const { validateSignUpData, validateLoginData } = require('./utils/validation')
+const bcrypt = require('bcrypt')
 
 app.use(express.json())
 
-app.post('/signup', async (req, res) => {
-  console.log(req.body)
-  const userObj = req.body
-
+app.post('/login', async (req, res) => {
   try {
-    const user = new User(userObj)
+    // Validate the data
+    validateLoginData(req)
+
+    const { emailId, password } = req.body
+
+    const user = await User.findOne({ emailId });
+    if (!user) {
+      throw new Error('Invalid credentials')
+    }
+    const isPasswordValid = await bcrypt.compare(password, user.password)
+    if (!isPasswordValid) {
+      throw new Error('Invalid credentials')
+    }
+    res.send('Login successful!')
+  } catch (error) {
+    res.status(400).send('ERROR : ' + error.message)
+  }
+})
+
+app.post('/signup', async (req, res) => {
+  try {
+  // Validate the data
+    validateSignUpData(req)
+
+    const { firstName, lastName, emailId, password } = req.body
+
+    // Encrypt the password
+    const passwordHash = await bcrypt.hash(password, 10)
+    console.log('Password hash:', passwordHash)
+
+    const user = new User({
+      firstName,
+      lastName,
+      emailId,
+      password: passwordHash
+    })
     await user.save()
-    res.send('User added successfully...')
+    res.send('User added successfully!')
   } catch (err) {
-    res.status(400).send('Error adding user: ' + err.message)
+    res.status(400).send('ERROR : ' + err.message)
   }
 })
 
